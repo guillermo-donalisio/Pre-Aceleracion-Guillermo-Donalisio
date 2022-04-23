@@ -1,3 +1,6 @@
+using Api_Disney.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +9,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Create Database SQL SERVER
+var connectionString = builder.Configuration.GetConnectionString("DisneyConnection");
+builder.Services.AddDbContext<DisneyContext>(x => x.UseSqlServer(connectionString));
 
 var app = builder.Build();
 
