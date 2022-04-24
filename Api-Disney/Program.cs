@@ -1,6 +1,10 @@
 using System.Text;
 using Api_Disney.Data;
 using Api_Disney.Models.Auth;
+using Api_Disney.Repositories;
+using Api_Disney.Repositories.Implements;
+using Api_Disney.Services;
+using Api_Disney.Services.Implements;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -78,6 +82,14 @@ builder.Services.AddAuthentication(option =>
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
     };
 });
+
+// Repositories
+builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
+builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+
+// Services
+builder.Services.AddScoped<ICharacterService, CharacterService>();
+builder.Services.AddScoped<IMovieService, MovieService>();
 
 // Build API
 var app = builder.Build();
