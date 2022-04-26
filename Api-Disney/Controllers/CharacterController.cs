@@ -1,3 +1,6 @@
+using System.Reflection.PortableExecutable;
+using System.IO;
+using System.Text.RegularExpressions;
 using Api_Disney.Models;
 using Api_Disney.Services;
 using Api_Disney.ViewModels.CRUD.Characters;
@@ -15,8 +18,9 @@ public class CharacterController : Controller
         this._characterService = characterService;
     }
 
+    // GENERIC REPOSITORY IMPLEMENTATION
     [HttpGet]
-    [Route ("all/characters")]
+    [Route ("character/getAll")]
     public async Task<ActionResult> GetAllCharacters() => Ok(await _characterService.GetAll());
 
     // [HttpGet]
@@ -24,10 +28,12 @@ public class CharacterController : Controller
     // public async Task<IActionResult> GetQueryable()
     // {
     //     try
-    //     {
+    //     {            
     //         var query = _characterService.GetQueryable()
-    //                     .Select(c => new {c.Name, c.Image_url})
-    //                     .ToList(); 
+    //                     .Select(c => new ListViewModel{name = c.Name, img_url = c.Image_url})
+    //                     .ToList();
+    //                     //.Select(c => new {c.Name, c.Image_url})
+    //                     //.ToList(); 
 
     //         return query;
     //     }
@@ -37,7 +43,7 @@ public class CharacterController : Controller
     //     }
     // }
 
-
+    // GENERIC REPOSITORY IMPLEMENTATION
     [HttpGet]        
     [Route("search/byId")]
 	public async Task<ActionResult> GetById(int id)
@@ -49,8 +55,9 @@ public class CharacterController : Controller
         return user != null ? Ok(user) : NotFound("User doesn't exists");
 	}    
 
+    // CREATE CHARACTER
     [HttpPost]       
-    [Route("create/character")]
+    [Route("character/create")]
 	public async Task<ActionResult> Create(CreateViewModel model)
 	{     
         var exists = await _characterService.SingleOrDefaultAsync(m => m.Name == model.name);
@@ -101,24 +108,70 @@ public class CharacterController : Controller
         return Ok(new 
         {
             Status = "Success",
-			Message = "Character Creation Successfully!"
+			Message = "Character creation successfully!"
         });   
              
 	}
 
+    // UPDATE CHARACTER
     [HttpPut]       
-    [Route("update/character/{id}")]
-    public async Task<ActionResult> Edit(Character character)
+    [Route("character/update")]
+    public async Task<ActionResult> Edit(UpdateViewModel model)
     {
+        //var match2 = await _characterService.GetById(model.id);
+        var match = _characterService.GetQueryable().FirstOrDefault(c => c.CharacterID == model.id);
+
+        if (match == null)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new
+            {
+                Status = "Error",
+                Message = "Id number not found!"
+            });
+        }
+
         if(ModelState.IsValid)
 		{
-			character = await _characterService.Update(character);
+            try
+            {
+                match.Image_url = model.image_url;
+                match.Name = model.name;
+                match.Age = model.age;
+                match.Weight = model.weight;
+                match.Story = model.story;
+
+                if(string.IsNullOrEmpty(model.image_url))
+                {                   
+                    return Ok("Image not found");
+                }
+                if(string.IsNullOrEmpty(model.name))
+                {
+                    return Ok("Name required");                    
+                }
+                if(string.IsNullOrEmpty(model.story))
+                {
+                    return Ok("Story required");
+                }
+
+                //return Ok("Se ejecuto esto");
+			    await _characterService.Update(match);
+            }
+            catch (System.Exception ex)
+            {                
+                throw new Exception(ex.Message);
+            }
 		}
-		return Ok(character);
+		
+        return Ok(new 
+        {
+            Status = "Success",
+			Message = "Character updated successfully!"
+        }); 
     }
-    
+
+    // DELETE CHARACTER
     [HttpDelete]       
-    [Route("delete/character/{id}")]
+    [Route("character/delete")]
     public async Task<ActionResult> Delete(int? id)
     {
         try
@@ -128,11 +181,15 @@ public class CharacterController : Controller
 
             await _characterService.Delete(id.Value);
 
-            return Ok("User deleted successfully.");
+            return Ok(new 
+            {
+                Status = "Success",
+                Message = "Character deleted successfully!"
+            }); 
         }
         catch (Exception)
         {
-            return NotFound("User doesn't exists");
+            return NotFound("Character doesn't exists");
         }
     }
     
