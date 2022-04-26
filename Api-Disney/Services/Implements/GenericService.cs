@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Api_Disney.Repositories;
 
 namespace Api_Disney.Services.Implements;
@@ -9,6 +10,11 @@ public class GenericService<TEntity> : IGenericService<TEntity> where TEntity : 
     public GenericService(IGenericRepository<TEntity> genericRepository)
     {
         this._genericRepository = genericRepository;
+    }
+
+    public IQueryable<TEntity> GetQueryable()
+    {
+        return _genericRepository.GetQueryable();
     }
 
     public async Task Delete(int id)
@@ -35,4 +41,9 @@ public class GenericService<TEntity> : IGenericService<TEntity> where TEntity : 
     {
         return await _genericRepository.Update(entity);
     }
+
+    public Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return _genericRepository.SingleOrDefaultAsync(predicate);
+    }    
 }

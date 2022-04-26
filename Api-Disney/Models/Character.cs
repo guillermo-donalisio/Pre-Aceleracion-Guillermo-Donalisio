@@ -6,10 +6,10 @@ public class Character
 {
         [Required]
         public int CharacterID {set;get;}
-        public string? Image_url {set;get;}
+        public string Image_url {set;get;}
 
         [MaxLength(30)]
-        public string? Name {set;get;}
+        public string Name {set;get;}
         public int Age {set;get;}
         public decimal Weight {set;get;}
 

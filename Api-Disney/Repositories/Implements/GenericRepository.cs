@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Api_Disney.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,11 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     public GenericRepository(DisneyContext disneyContext)
     {
         this._disneyContext = disneyContext;   
+    }
+    
+    public IQueryable<TEntity> GetQueryable()
+    {
+        return _disneyContext.Set<TEntity>();
     }
     
     public async Task Delete(int id)
@@ -51,5 +57,10 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
         _disneyContext.Set<TEntity>().Update(entity);
         await _disneyContext.SaveChangesAsync();
         return entity;
+    }
+
+    public Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return _disneyContext.Set<TEntity>().SingleOrDefaultAsync(predicate);
     }
 }
