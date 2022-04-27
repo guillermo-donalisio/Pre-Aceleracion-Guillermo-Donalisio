@@ -23,27 +23,25 @@ public class CharacterController : Controller
     [Route ("character/getAll")]
     public async Task<ActionResult> GetAllCharacters() => Ok(await _characterService.GetAll());
 
-    // [HttpGet]
-    // [Route ("characters")]
-    // public async Task<IActionResult> GetQueryable()
-    // {
-    //     try
-    //     {            
-    //         var query = _characterService.GetQueryable()
-    //                     .Select(c => new ListViewModel{name = c.Name, img_url = c.Image_url})
-    //                     .ToList();
-    //                     //.Select(c => new {c.Name, c.Image_url})
-    //                     //.ToList(); 
+    [HttpGet]
+    [Route ("characters")]
+    public async Task<IActionResult> GetQueryable()
+    {
+        try
+        {            
+            var query = _characterService.GetQueryable()
+                        .Select(c => new ListViewModel{name = c.Name, img_url = c.Image_url})
+                        .ToList();
 
-    //         return query;
-    //     }
-    //     catch (System.Exception e)
-    //     {
-    //         throw new Exception(e.Message);
-    //     }
-    // }
+            return Ok(query);
+        }
+        catch (System.Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 
-    // GENERIC REPOSITORY IMPLEMENTATION
+    // SEARCH CHARACTER
     [HttpGet]        
     [Route("search/byId")]
 	public async Task<ActionResult> GetById(int id)
@@ -51,8 +49,8 @@ public class CharacterController : Controller
 		if(id == 0)
 			return NotFound("Please, set an ID.");
 
-        var user = await _characterService.GetById(id);
-        return user != null ? Ok(user) : NotFound("User doesn't exists");
+        var character = await _characterService.GetById(id);
+        return character != null ? Ok(character) : NotFound("Character doesn't exists");
 	}    
 
     // CREATE CHARACTER
@@ -118,7 +116,6 @@ public class CharacterController : Controller
     [Route("character/update")]
     public async Task<ActionResult> Edit(UpdateViewModel model)
     {
-        //var match2 = await _characterService.GetById(model.id);
         var match = _characterService.GetQueryable().FirstOrDefault(c => c.CharacterID == model.id);
 
         if (match == null)
@@ -153,7 +150,6 @@ public class CharacterController : Controller
                     return Ok("Story required");
                 }
 
-                //return Ok("Se ejecuto esto");
 			    await _characterService.Update(match);
             }
             catch (System.Exception ex)
