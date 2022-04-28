@@ -24,13 +24,28 @@ public class CharacterController : Controller
     public async Task<ActionResult> GetAllCharacters() => Ok(await _characterService.GetAll());
 
     [HttpGet]
+    [Route ("character/details")]
+    public async Task<IActionResult> GetDetails()
+    {
+        try
+        {
+            var query = _characterService.GetQuery();
+            return Ok(query);
+        }
+        catch (System.Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    [HttpGet]
     [Route ("characters")]
     public async Task<IActionResult> GetQueryable()
     {
         try
-        {            
+        {           
             var query = _characterService.GetQueryable()
-                        .Select(c => new ListViewModel{name = c.Name, img_url = c.Image_url})
+                        .Select(c => new ListCharacterDTO{name = c.Name, img_url = c.Image_url})
                         .ToList();
 
             return Ok(query);
@@ -56,7 +71,7 @@ public class CharacterController : Controller
     // CREATE CHARACTER
     [HttpPost]       
     [Route("character/create")]
-	public async Task<ActionResult> Create(CreateViewModel model)
+	public async Task<ActionResult> Create(CreateCharacterDTO model)
 	{     
         var exists = await _characterService.SingleOrDefaultAsync(m => m.Name == model.name);
 
@@ -114,7 +129,7 @@ public class CharacterController : Controller
     // UPDATE CHARACTER
     [HttpPut]       
     [Route("character/update")]
-    public async Task<ActionResult> Edit(UpdateViewModel model)
+    public async Task<ActionResult> Edit(UpdateCharacterDTO model)
     {
         var match = _characterService.GetQueryable().FirstOrDefault(c => c.CharacterID == model.id);
 
