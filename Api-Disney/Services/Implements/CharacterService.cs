@@ -11,4 +11,10 @@ public class CharacterService : GenericService<Character>, ICharacterService
     {
         this._characterRepository = characterRepository;
     }
+
+    public IQueryable<Character> GetQuery()
+    {
+        return _characterRepository.GetQuery();
+    }
+ 
 }
