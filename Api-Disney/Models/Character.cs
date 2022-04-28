@@ -4,6 +4,7 @@ namespace Api_Disney.Models;
 
 public class Character
 {
+        [Key]
         [Required]
         public int CharacterID {set;get;}
         public string Image_url {set;get;}
@@ -14,9 +15,12 @@ public class Character
         public decimal Weight {set;get;}
 
         [MaxLength(150)]
-        public string? Story {set;get;}
-        
+        public string Story {set;get;}
+
         // Collection navigation property 
-        public List<MovieCharacter>? MovieCharacter { get; set; }
+        public List<Movie> Movies { get; set; }
+
+        // // Collection navigation property 
+        // public List<MovieCharacter>? MovieCharacter { get; set; }
      
 }

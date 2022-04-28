@@ -34,13 +34,16 @@ namespace Api_Disney.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Image_url")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Story")
+                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
@@ -62,30 +65,17 @@ namespace Api_Disney.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GenreID"), 1L, 1);
 
                     b.Property<string>("Image_url")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
                     b.HasKey("GenreID");
 
                     b.ToTable("Genres");
-                });
-
-            modelBuilder.Entity("Api_Disney.Models.GenreMovie", b =>
-                {
-                    b.Property<int>("GenreID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MovieID")
-                        .HasColumnType("int");
-
-                    b.HasKey("GenreID", "MovieID");
-
-                    b.HasIndex("MovieID");
-
-                    b.ToTable("GenresMovies");
                 });
 
             modelBuilder.Entity("Api_Disney.Models.Movie", b =>
@@ -100,12 +90,14 @@ namespace Api_Disney.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Image_url")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -114,74 +106,64 @@ namespace Api_Disney.Migrations
                     b.ToTable("Movies");
                 });
 
-            modelBuilder.Entity("Api_Disney.Models.MovieCharacter", b =>
+            modelBuilder.Entity("CharacterMovie", b =>
                 {
-                    b.Property<int>("CharacterID")
+                    b.Property<int>("CharactersCharacterID")
                         .HasColumnType("int");
 
-                    b.Property<int>("MovieID")
+                    b.Property<int>("MoviesMovieID")
                         .HasColumnType("int");
 
-                    b.HasKey("CharacterID", "MovieID");
+                    b.HasKey("CharactersCharacterID", "MoviesMovieID");
 
-                    b.HasIndex("MovieID");
+                    b.HasIndex("MoviesMovieID");
 
-                    b.ToTable("MoviesCharacters");
+                    b.ToTable("CharacterMovie");
                 });
 
-            modelBuilder.Entity("Api_Disney.Models.GenreMovie", b =>
+            modelBuilder.Entity("GenreMovie", b =>
                 {
-                    b.HasOne("Api_Disney.Models.Genre", "Genre")
-                        .WithMany("GenreMovie")
-                        .HasForeignKey("GenreID")
+                    b.Property<int>("GenresGenreID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MoviesMovieID")
+                        .HasColumnType("int");
+
+                    b.HasKey("GenresGenreID", "MoviesMovieID");
+
+                    b.HasIndex("MoviesMovieID");
+
+                    b.ToTable("GenreMovie");
+                });
+
+            modelBuilder.Entity("CharacterMovie", b =>
+                {
+                    b.HasOne("Api_Disney.Models.Character", null)
+                        .WithMany()
+                        .HasForeignKey("CharactersCharacterID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Api_Disney.Models.Movie", "Movie")
-                        .WithMany("GenreMovie")
-                        .HasForeignKey("MovieID")
+                    b.HasOne("Api_Disney.Models.Movie", null)
+                        .WithMany()
+                        .HasForeignKey("MoviesMovieID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GenreMovie", b =>
+                {
+                    b.HasOne("Api_Disney.Models.Genre", null)
+                        .WithMany()
+                        .HasForeignKey("GenresGenreID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Genre");
-
-                    b.Navigation("Movie");
-                });
-
-            modelBuilder.Entity("Api_Disney.Models.MovieCharacter", b =>
-                {
-                    b.HasOne("Api_Disney.Models.Character", "Character")
-                        .WithMany("MovieCharacter")
-                        .HasForeignKey("CharacterID")
+                    b.HasOne("Api_Disney.Models.Movie", null)
+                        .WithMany()
+                        .HasForeignKey("MoviesMovieID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Api_Disney.Models.Movie", "Movie")
-                        .WithMany("MovieCharacter")
-                        .HasForeignKey("MovieID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Character");
-
-                    b.Navigation("Movie");
-                });
-
-            modelBuilder.Entity("Api_Disney.Models.Character", b =>
-                {
-                    b.Navigation("MovieCharacter");
-                });
-
-            modelBuilder.Entity("Api_Disney.Models.Genre", b =>
-                {
-                    b.Navigation("GenreMovie");
-                });
-
-            modelBuilder.Entity("Api_Disney.Models.Movie", b =>
-                {
-                    b.Navigation("GenreMovie");
-
-                    b.Navigation("MovieCharacter");
                 });
 #pragma warning restore 612, 618
         }
