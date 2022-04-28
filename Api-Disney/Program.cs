@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using Api_Disney.Data;
 using Api_Disney.Models.Auth;
 using Api_Disney.Repositories;
@@ -16,8 +17,12 @@ ConfigurationManager configuration = builder.Configuration;
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+                    .AddJsonOptions(o => o.JsonSerializerOptions
+                        .ReferenceHandler = ReferenceHandler.Preserve);
+                        
 builder.Services.AddEndpointsApiExplorer();
+
 
 // Configure Swagger Authorization
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
