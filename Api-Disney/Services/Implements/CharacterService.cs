@@ -12,6 +12,11 @@ public class CharacterService : GenericService<Character>, ICharacterService
         this._characterRepository = characterRepository;
     }
 
+    public IQueryable<Character> GetByName(string name, int age, decimal weight, int movieId)
+    {
+        return _characterRepository.GetByName(name, age, weight, movieId);
+    }
+
     public IQueryable<Character> GetQuery()
     {
         return _characterRepository.GetQuery();
