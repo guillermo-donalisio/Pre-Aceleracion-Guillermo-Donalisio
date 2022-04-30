@@ -18,26 +18,7 @@ public class CharacterController : Controller
         this._characterService = characterService;
     }
 
-    // GENERIC REPOSITORY IMPLEMENTATION
-    [HttpGet]
-    [Route ("character/getAll")]
-    public async Task<ActionResult> GetAllCharacters() => Ok(await _characterService.GetAll());
-
-    [HttpGet]
-    [Route ("character/details")]
-    public async Task<IActionResult> GetDetails()
-    {
-        try
-        {
-            var query = _characterService.GetQuery();
-            return Ok(query);
-        }
-        catch (System.Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
+    // GET CHARACTER NAME & IMAGE
     [HttpGet]
     [Route ("characters")]
     public async Task<IActionResult> GetQueryable()
@@ -56,17 +37,48 @@ public class CharacterController : Controller
         }
     }
 
+    // GET CHARACTER DETAILS
+    [HttpGet]
+    [Route ("character/details")]
+    public async Task<IActionResult> GetDetails()
+    {
+        try
+        {
+            var query = _characterService.GetQuery();
+            return Ok(query);
+        }
+        catch (System.Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }   
+
     // SEARCH CHARACTER
     [HttpGet]        
-    [Route("search/byId")]
-	public async Task<ActionResult> GetById(int id)
+    [Route("character/byName")]
+	public async Task<ActionResult> GetByName([FromQuery] SearchCharacterDTO model)
 	{
-		if(id == 0)
-			return NotFound("Please, set an ID.");
+        var exists = await _characterService.SingleOrDefaultAsync(m => m.Name == model.name);
 
-        var character = await _characterService.GetById(id);
-        return character != null ? Ok(character) : NotFound("Character doesn't exists");
-	}    
+        if (exists == null)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new
+            {
+                Status = "Error",
+                Message = "The character doesn't exists!"
+            });
+        }
+        
+        try
+        {
+            var query = _characterService.GetByName(model.name, model.age, model.weight,model.movieId);            
+            return Ok(query);
+        }
+        catch (System.Exception ex)
+        {            
+            throw new Exception(ex.Message);
+        }
+	}  
 
     // CREATE CHARACTER
     [HttpPost]       
