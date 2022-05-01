@@ -17,9 +17,9 @@ public class CharacterService : GenericService<Character>, ICharacterService
         return _characterRepository.GetByName(name, age, weight, movieId);
     }
 
-    public IQueryable<Character> GetQuery()
+    public IQueryable<Character> GetCharacterDetails()
     {
-        return _characterRepository.GetQuery();
+        return _characterRepository.GetCharacterDetails();
     }
  
 }

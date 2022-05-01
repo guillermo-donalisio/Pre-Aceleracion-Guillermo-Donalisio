@@ -45,5 +45,10 @@ public class GenericService<TEntity> : IGenericService<TEntity> where TEntity : 
     public Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
     {
         return _genericRepository.SingleOrDefaultAsync(predicate);
-    }    
+    }
+
+    public Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return _genericRepository.FirstOrDefaultAsync(predicate);
+    }
 }

@@ -11,4 +11,14 @@ public class MovieService : GenericService<Movie>, IMovieService
     {
         this._movieRepository = movieRepository;
     }
+
+    public IQueryable<Movie> GetMovieByTitle(string title, int genreId, string orderBy)
+    {
+        return _movieRepository.GetMovieByTitle(title, genreId, orderBy);
+    }
+
+    public IQueryable<Movie> GetMovieDetails()
+    {
+        return _movieRepository.GetMovieDetails();
+    }
 }
