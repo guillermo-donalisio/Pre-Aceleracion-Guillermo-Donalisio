@@ -1,8 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using Api_Disney.Models.Auth;
+using Api_Disney.Services;
 using Api_Disney.ViewModels.Auth.Login;
 using Api_Disney.ViewModels.Auth.Register;
 using Microsoft.AspNetCore.Identity;
@@ -17,15 +17,18 @@ public class AuthenticationController : Controller
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
     private readonly IConfiguration _configuration;
+    private readonly IMailService _mailService;
 
     public AuthenticationController
         (UserManager<User> userManager, 
         SignInManager<User> signInManager, 
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IMailService mailService)
     {
         this._userManager = userManager;
         this._signInManager = signInManager;
         this._configuration = configuration;
+        this._mailService = mailService;
     }
 
     // Register
@@ -47,6 +50,9 @@ public class AuthenticationController : Controller
         };
 
         var result = await _userManager.CreateAsync(user, model.Password);
+
+        if(result.Succeeded)
+            await _mailService.SendEmailAsync(model.Email, "Verify Email", "<strong>Mail sent by SendGrid with C#</strong>");
 
         if(!result.Succeeded)
         {

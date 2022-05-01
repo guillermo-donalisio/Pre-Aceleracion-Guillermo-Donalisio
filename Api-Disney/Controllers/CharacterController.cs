@@ -1,14 +1,13 @@
-using System.Reflection.PortableExecutable;
-using System.IO;
-using System.Text.RegularExpressions;
 using Api_Disney.Models;
 using Api_Disney.Services;
 using Api_Disney.ViewModels.CRUD.Characters;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Api_Disney.Controllers;
 
 [ApiController]
+[Authorize]
 public class CharacterController : Controller
 {
     private readonly ICharacterService _characterService;

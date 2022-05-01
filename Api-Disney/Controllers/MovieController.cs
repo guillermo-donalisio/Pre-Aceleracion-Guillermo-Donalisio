@@ -1,6 +1,7 @@
 using Api_Disney.Models;
 using Api_Disney.Services;
 using Api_Disney.ViewModels.CRUD.Movie;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq.Dynamic.Core;
 
@@ -8,6 +9,7 @@ using System.Linq.Dynamic.Core;
 namespace Api_Disney.Controllers;
 
 [ApiController]
+[Authorize]
 public class MovieController : Controller
 {
     private readonly IMovieService _movieService;
@@ -131,4 +133,77 @@ public class MovieController : Controller
         });   
              
 	}
+
+    // UPDATE MOVIE
+    [HttpPut]       
+    [Route("movie/update")]
+    public async Task<ActionResult> Edit(UpdateMovieDTO model)
+    {
+        var match = _movieService.GetQueryable().FirstOrDefault(c => c.MovieID == model.movieID);
+
+        if (match == null)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new
+            {
+                Status = "Error",
+                Message = "Id number not found!"
+            });
+        }
+
+        if(ModelState.IsValid)
+		{
+            try
+            {
+                match.Image_url = model.image_url;
+                match.Title = model.title;
+                match.Date_creation = model.date_creation;
+                match.Rating = model.rating;
+
+                if(string.IsNullOrEmpty(model.image_url))
+                {                   
+                    return Ok("Image not found");
+                }
+                if(string.IsNullOrEmpty(model.title))
+                {
+                    return Ok("Name required");                    
+                }
+
+			    await _movieService.Update(match);
+            }
+            catch (System.Exception ex)
+            {                
+                throw new Exception(ex.Message);
+            }
+		}
+		
+        return Ok(new 
+        {
+            Status = "Success",
+			Message = "Movie updated successfully!"
+        }); 
+    }
+
+    // DELETE MOVIE
+    [HttpDelete]       
+    [Route("movie/delete")]
+    public async Task<ActionResult> Delete(int? id)
+    {
+        try
+        {
+            if(id == null)
+                return NotFound();
+
+            await _movieService.Delete(id.Value);
+
+            return Ok(new 
+            {
+                Status = "Success",
+                Message = "Movie deleted successfully!"
+            }); 
+        }
+        catch (Exception)
+        {
+            return NotFound("Movie doesn't exists");
+        }
+    }
 }
