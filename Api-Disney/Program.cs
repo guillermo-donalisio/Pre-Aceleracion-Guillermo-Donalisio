@@ -91,10 +91,12 @@ builder.Services.AddAuthentication(option =>
 // Repositories
 builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+builder.Services.AddTransient<IMailRepository, MailRepository>();
 
 // Services
 builder.Services.AddScoped<ICharacterService, CharacterService>();
 builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddTransient<IMailService, MailService>();
 
 // Build API
 var app = builder.Build();
