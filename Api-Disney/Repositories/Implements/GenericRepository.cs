@@ -1,6 +1,5 @@
 using System.Linq.Expressions;
 using Api_Disney.Data;
-using Api_Disney.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api_Disney.Repositories.Implements;
@@ -11,7 +10,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
 
     public GenericRepository(DisneyContext disneyContext)
     {
-        this._disneyContext = disneyContext;   
+        this._disneyContext = disneyContext;  
     }    
     
     public async Task Delete(int id)
@@ -68,6 +67,5 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     public Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
     {
         return _disneyContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
-
     }
 }
