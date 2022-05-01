@@ -5,6 +5,6 @@ namespace Api_Disney.Repositories;
 
 public interface ICharacterRepository : IGenericRepository<Character>
 {
-	IQueryable<Character> GetQuery();
+	IQueryable<Character> GetCharacterDetails();
 	IQueryable<Character> GetByName(string name, int age, decimal weight, int movieId);
 }

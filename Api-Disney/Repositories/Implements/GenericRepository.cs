@@ -63,5 +63,11 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
     public IQueryable<TEntity> GetQueryable()
     {
         return _disneyContext.Set<TEntity>();
-    }   
+    }
+
+    public Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return _disneyContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
+
+    }
 }

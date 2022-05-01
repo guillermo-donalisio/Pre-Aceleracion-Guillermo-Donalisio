@@ -17,7 +17,7 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
         this._disneyContext = disneyContext;   
     }
 
-    public IQueryable<Character> GetQuery()
+    public IQueryable<Character> GetCharacterDetails()
     {
         return _disneyContext.Characters.Include(a => a.Movies)
                                             .ThenInclude(a => a.Genres);
@@ -26,10 +26,9 @@ public class CharacterRepository : GenericRepository<Character>, ICharacterRepos
     public IQueryable<Character> GetByName(string name, int age, decimal weight, int movieId)
     {  
         var query = _disneyContext.Characters
-            //.Where(c => c.Name == name)
             .Include(x => x.Movies)                    
                 .ThenInclude(g => g.Genres)
-                    .Where(x => x.Name == name || x.Age == age 
+                    .Where(x => x.Name.Contains(name) || x.Age == age 
                             || x.Weight == weight 
                             || x.Movies.Any(i => i.MovieID == movieId)) 
                                 .Select(c => new Character{
