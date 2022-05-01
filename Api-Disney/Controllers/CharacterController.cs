@@ -44,7 +44,7 @@ public class CharacterController : Controller
     {
         try
         {
-            var query = _characterService.GetQuery();
+            var query = _characterService.GetCharacterDetails();
             return Ok(query);
         }
         catch (System.Exception e)
@@ -58,7 +58,8 @@ public class CharacterController : Controller
     [Route("character/byName")]
 	public async Task<ActionResult> GetByName([FromQuery] SearchCharacterDTO model)
 	{
-        var exists = await _characterService.SingleOrDefaultAsync(m => m.Name == model.name);
+        //var exists = await _characterService.SingleOrDefaultAsync(m => m.Name == model.name);
+        var exists = await _characterService.FirstOrDefaultAsync(m => m.Name.Contains(model.name));
 
         if (exists == null)
         {
