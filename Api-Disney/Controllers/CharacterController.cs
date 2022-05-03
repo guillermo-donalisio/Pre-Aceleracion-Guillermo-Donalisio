@@ -20,7 +20,7 @@ public class CharacterController : Controller
     // GET CHARACTER NAME & IMAGE
     [HttpGet]
     [Route ("characters")]
-    public async Task<IActionResult> GetQueryable()
+    public async Task<IActionResult> GetAllAsync()
     {
         try
         {           

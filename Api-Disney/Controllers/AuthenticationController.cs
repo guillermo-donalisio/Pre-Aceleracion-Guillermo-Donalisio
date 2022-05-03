@@ -31,6 +31,8 @@ public class AuthenticationController : Controller
         this._mailService = mailService;
     }
 
+    //public AuthenticationController(){}
+
     // Register
     [HttpPost]
     [Route ("auth/register")]
@@ -49,10 +51,7 @@ public class AuthenticationController : Controller
             Email = model.Email
         };
 
-        var result = await _userManager.CreateAsync(user, model.Password);
-
-        if(result.Succeeded)
-            await _mailService.SendEmailAsync(model.Email, "Verify Email", "<strong>Mail sent by SendGrid with C#</strong>");
+        var result = await _userManager.CreateAsync(user, model.Password);       
 
         if(!result.Succeeded)
         {
@@ -61,6 +60,11 @@ public class AuthenticationController : Controller
                 Status = "Error",
                 Message = $"User Creation Failed! Errors: {string.Join(", ", result.Errors.Select(x => x.Description))}"
             });
+        }
+        else
+        {
+            // Email notification by SendGrid
+            await _mailService.SendEmailAsync(model.Email);
         }
         
         return Ok(new 
