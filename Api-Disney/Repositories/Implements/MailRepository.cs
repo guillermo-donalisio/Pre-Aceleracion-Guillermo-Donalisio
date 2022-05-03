@@ -12,16 +12,16 @@ public class MailRepository : IMailRepository
         this._configuration = configuration;
     }
 
-    public async Task SendEmailAsync(string toEmail, string subject, string content)
+    public async Task SendEmailAsync(string toEmail)
     {
         var apiKey = _configuration["SendGrid:ApiKey"];
         var client = new SendGridClient(apiKey);
-        var from = new EmailAddress("guillermo.donalisio1@gmail.com", "JWT Auth email");
-        //var subject = "Verify your acoount";
+        var from = new EmailAddress("guillermo.donalisio1@gmail.com", "Testing Auth email");
+        var subject = "Verify your email";
         var to = new EmailAddress(toEmail);
-        //var plainTextContent = "and easy to do anywhere, even with C#";
-        //var htmlContent = "<strong>and easy to do anywhere, even with C#</strong>";
-        var msg = MailHelper.CreateSingleEmail(from, to, subject, content, content);
+        var plainTextContent = "Mail sent by SendGrid with C#";
+        var htmlContent = "<strong>Mail sent by SendGrid with C#</strong>";
+        var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
         var response = await client.SendEmailAsync(msg);
     }
 }
