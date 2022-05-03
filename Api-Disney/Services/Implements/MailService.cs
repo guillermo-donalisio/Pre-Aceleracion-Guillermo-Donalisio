@@ -10,8 +10,8 @@ public class MailService : IMailService
     {
         this._mailRepository = mailRepository;   
     }
-    public async Task SendEmailAsync(string toEmail, string subject, string content)
+    public async Task SendEmailAsync(string toEmail)
     {
-        await _mailRepository.SendEmailAsync(toEmail, subject, content);
+        await _mailRepository.SendEmailAsync(toEmail);
     }
 }
